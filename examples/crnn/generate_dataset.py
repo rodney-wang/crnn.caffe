@@ -8,7 +8,7 @@ import h5py
 
 CAFFE_ROOT = os.getcwd()   # assume you are in $CAFFE_ROOT$ dir
 img_path = os.path.join(CAFFE_ROOT, 'data/captcha/')
-IMAGE_WIDTH, IMAGE_HEIGHT = 128, 32
+IMAGE_WIDTH, IMAGE_HEIGHT = 96, 32
 LABEL_SEQ_LEN = 5
 # captcha images list
 images = filter(lambda x: os.path.splitext(x)[1] == '.png', os.listdir(img_path))
@@ -68,7 +68,7 @@ def write_image_info_into_hdf5(file_name, images, phase):
             process_pool.append(p)
         for p in process_pool:
             p.join()
-trainning_size = 80000   # number of images for trainning
+trainning_size = 8000   # number of images for trainning
 trainning_images = images[:trainning_size]
 
 testing_images = images[trainning_size:]

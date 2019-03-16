@@ -5,7 +5,7 @@ import os
 import numpy as np
 from multiprocessing import Process
 
-DATASET_SIZE = 100000
+DATASET_SIZE = 10000
 LABEL_SEQ_LENGTH = 5
 BLANK_LABEL = 10
 
