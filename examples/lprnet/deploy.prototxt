@@ -872,7 +872,7 @@ layer {
   bottom: "conv6"
   top: "conv6"
   reduction_param {
-    axis: 2   #reduce the H dim
+    axis: 3   #reduce the H dim
     operation: MEAN  # use mean
   }
 }
