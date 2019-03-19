@@ -831,30 +831,6 @@ layer {
   }
 }
 layer {
-	bottom: "conv6"
-	top: "conv6"
-	name: "bn_conv6"
-	type: "BatchNorm"
-	batch_norm_param {
-		use_global_stats: false
-	}
-    include {
-        phase: TRAIN
-    }
-}
-layer {
-    bottom: "conv6"
-    top: "conv6"
-    name: "bn_conv6"
-    type: "BatchNorm"
-    batch_norm_param {
-        use_global_stats: true
-    }
-    include{
-        phase: TEST
-    }
-}
-layer {
   name: "permute_hw"
   type: "Permute"
   bottom: "conv6"
