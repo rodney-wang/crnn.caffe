@@ -10,6 +10,7 @@ layer {
     hdf5_data_param {
         source: "./data/captcha/lpr_trainning.list"
         batch_size: 523
+        is_color: false  # force gray scale images
     }
 }
 #w:94*24*1
@@ -24,6 +25,7 @@ layer {
     hdf5_data_param {
         source: "./data/captcha/lpr_testing.list"
         batch_size: 523
+        is_color: false  # force gray scale images
     }
 }
 layer {
