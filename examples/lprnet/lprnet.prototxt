@@ -876,8 +876,8 @@ layer {
   permute_param {
     order: 0
     order: 1
-    order: 4
-    order:3
+    order: 3
+    order: 2
   }
 }
 layer {
