@@ -1,5 +1,3 @@
-# Enter your network definition here.
-# Use Shift+Enter to update the visualization.
 name: "lprnet"
 layer {
     name: "data"
@@ -674,18 +672,28 @@ layer {
   }
 }
 layer {
-  name: "norm_apool0"
-  type: "Normalize"
-  bottom: "apool0"
-  top: "apool0"
-  norm_param {
-    across_spatial: True
-    scale_filler {
-      type: "constant"
-      value: 6
+	bottom: "apool0"
+	top: "apool0"
+	name: "norm_apool0"
+	type: "BatchNorm"
+	batch_norm_param {
+		use_global_stats: false
+	}
+    include {
+        phase: TRAIN
     }
-    channel_shared: True
-  }
+}
+layer {
+	bottom: "apool0"
+	top: "apool0"
+	name: "norm_apool0"
+	type: "BatchNorm"
+    batch_norm_param {
+        use_global_stats: true
+    }
+    include{
+        phase: TEST
+    }
 }
 ###Average Pooling of sbb1##
 layer {
@@ -704,18 +712,28 @@ layer {
   }
 }
 layer {
-  name: "norm_apool1"
-  type: "Normalize"
-  bottom: "apool1"
-  top: "apool1"
-  norm_param {
-    across_spatial: True
-    scale_filler {
-      type: "constant"
-      value: 6
+	bottom: "apool1"
+	top: "apool1"
+	name: "norm_apool1"
+	type: "BatchNorm"
+	batch_norm_param {
+		use_global_stats: false
+	}
+    include {
+        phase: TRAIN
     }
-    channel_shared: True
-  }
+}
+layer {
+	bottom: "apool1"
+	top: "apool1"
+	name: "norm_apool1"
+	type: "BatchNorm"
+    batch_norm_param {
+        use_global_stats: true
+    }
+    include{
+        phase: TEST
+    }
 }
 ###Average Pooling of sbb2##
 layer {
@@ -734,19 +752,30 @@ layer {
   }
 }
 layer {
-  name: "norm_apool2"
-  type: "Normalize"
-  bottom: "apool2"
-  top: "apool2"
-  norm_param {
-    across_spatial: True
-    scale_filler {
-      type: "constant"
-      value: 6
+	bottom: "apool2"
+	top: "apool2"
+	name: "norm_apool2"
+	type: "BatchNorm"
+	batch_norm_param {
+		use_global_stats: false
+	}
+    include {
+        phase: TRAIN
     }
-    channel_shared: True
-  }
 }
+layer {
+	bottom: "apool2"
+	top: "apool2"
+	name: "norm_apool2"
+	type: "BatchNorm"
+    batch_norm_param {
+        use_global_stats: true
+    }
+    include{
+        phase: TEST
+    }
+}
+### End of Pooling of sbb2"
 layer {
   name: "concat1"
   bottom: "apool0"
