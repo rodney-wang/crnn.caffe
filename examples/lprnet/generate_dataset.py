@@ -40,8 +40,8 @@ def write_image_info_into_hdf5(file_name, images, phase):
             numbers_str = img_name[img_name.find('-')+1:]
             numbers = np.array(map(lambda x: float(x), numbers_str))
             label_seq[i, :len(numbers)] = numbers
-            img = caffe.io.load_image(os.path.join(img_path, image))
-            img = caffe.io.resize(img, (IMAGE_HEIGHT, IMAGE_WIDTH, 3))
+            img = caffe.io.load_image(os.path.join(img_path, image),False)
+            img = caffe.io.resize(img, (IMAGE_HEIGHT, IMAGE_WIDTH, 1))
             img = np.transpose(img, (2, 0, 1))
             img_data[i] = img
             """
