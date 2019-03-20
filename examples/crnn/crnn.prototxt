@@ -7,6 +7,9 @@ layer {
     include {
         phase: TRAIN
     }
+    transform_param {
+    scale: 0.00390625
+    }
     hdf5_data_param {
         source: "./data/captcha/trainning.list"
         batch_size: 523
@@ -20,6 +23,9 @@ layer {
     top: "label"
     include {
         phase: TEST
+    }
+    transform_param {
+    scale: 0.00390625
     }
     hdf5_data_param {
         source: "./data/captcha/testing.list"
@@ -576,7 +582,7 @@ layer {
     decay_mult: 0
   }
   inner_product_param {
-    num_output: 75
+    num_output: 74
 	axis: 2
     weight_filler {
       type: "xavier"
@@ -595,8 +601,8 @@ layer {
 	top: "ctc_loss"
 	loss_weight: 1.0
 	ctc_loss_param {
-		blank_label: 74
-		alphabet_size: 75
+		blank_label: 73
+		alphabet_size: 74
     	time_step: 24
 	}
 }
