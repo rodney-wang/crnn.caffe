@@ -7,12 +7,9 @@ layer {
     include {
         phase: TRAIN
     }
-    transform_param {
-    scale: 0.00390625
-    }
     hdf5_data_param {
-        source: "./data/captcha/trainning.list"
-        batch_size: 523
+        source: "./data/plate/crnn/plate_trainning.list"
+        batch_size: 256
     }
 }
 #w:96*32
@@ -24,12 +21,9 @@ layer {
     include {
         phase: TEST
     }
-    transform_param {
-    scale: 0.00390625
-    }
     hdf5_data_param {
-        source: "./data/captcha/testing.list"
-        batch_size: 523
+        source: "./data/plate/crnn/plate_testing.list"
+        batch_size: 256
     }
 }
 layer {
@@ -507,7 +501,7 @@ layer {
     reshape_param {
         shape {
         #n*c*(w*h)
-            dim: 523
+            dim: 256
             dim: 512
             dim: 24
         }
@@ -531,7 +525,7 @@ layer {
     top: "indicator"
     continuation_indicator_param {
         time_step:  24
-        batch_size: 523
+        batch_size: 256
     }
 }
 layer {
