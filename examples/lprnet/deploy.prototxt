@@ -601,7 +601,7 @@ layer {
     lr_mult: 2
   }
   convolution_param {
-    num_output: 75
+    num_output: 74
     kernel_w: 1
     kernel_h: 13
     stride: 1
@@ -819,7 +819,7 @@ layer {
     lr_mult: 2
   }
   convolution_param {
-    num_output: 75
+    num_output: 74
     kernel_size: 1
     stride: 1
     weight_filler {
@@ -872,8 +872,8 @@ layer {
 	top: "ctc_loss"
 	loss_weight: 1.0
 	ctc_loss_param {
-		blank_label: 74
-		alphabet_size: 75
+		blank_label: 73
+		alphabet_size: 74
     	time_step: 24
 	}
 }
@@ -896,6 +896,6 @@ layer {
   bottom: "label"
   top: "accuracy"
   labelsequence_accuracy_param {
-    blank_label: 74
+    blank_label: 73
   }
 }

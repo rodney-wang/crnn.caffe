@@ -8,7 +8,7 @@ layer {
         phase: TRAIN
     }
     hdf5_data_param {
-        source: "./data/captcha/lpr_trainning.list"
+        source: "./data/plate/lpr/plate_trainning.list"
         batch_size: 128 
     }
 }
@@ -22,7 +22,7 @@ layer {
         phase: TEST
     }
     hdf5_data_param {
-        source: "./data/captcha/lpr_testing.list"
+        source: "./data/plate/lpr/plate_testing.list"
         batch_size:128 
     }
 }
@@ -615,7 +615,7 @@ layer {
     lr_mult: 2
   }
   convolution_param {
-    num_output: 75
+    num_output: 74
     kernel_w: 1
     kernel_h: 13
     stride: 1
@@ -833,7 +833,7 @@ layer {
     lr_mult: 2
   }
   convolution_param {
-    num_output: 75
+    num_output: 74
     kernel_size: 1
     stride: 1
     weight_filler {
@@ -886,8 +886,8 @@ layer {
 	top: "ctc_loss"
 	loss_weight: 1.0
 	ctc_loss_param {
-		blank_label: 74
-		alphabet_size: 75
+		blank_label: 73
+		alphabet_size: 74
     	time_step: 24
 	}
 }
