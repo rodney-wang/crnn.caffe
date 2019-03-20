@@ -8,16 +8,21 @@ import h5py
 import json
 import random
 import argparse
+import codecs
 
 CAFFE_ROOT = os.getcwd()   # assume you are in $CAFFE_ROOT$ dir
 IMAGE_WIDTH, IMAGE_HEIGHT = 94, 24
 LABEL_SEQ_LEN = 8
+char_dict = json.load(open('utils/carplate.json', 'r'))
+num_dict =  {v: k for k, v in char_dict.iteritems()}
 
 def write_image_info_into_file(file_name, data_tuple):
-    with open(file_name, 'w') as f:
+    with codecs.open(file_name, 'w', encoding='utf-8') as f:
         for datum in data_tuple:
             img_path, numbers = datum
-            f.write(img_path) + "|" + ','.join(numbers) + "\n")
+            numbers_str = [str(num) for num in numbers]
+            chars = [num_dict.get(i, '-') for i in numbers]
+            f.write(img_path + "|" + ','.join(chars) + "\n")
 
 
 def write_image_info_into_hdf5(file_name, data_tuple, phase):
@@ -38,8 +43,8 @@ def write_image_info_into_hdf5(file_name, data_tuple, phase):
             img = np.transpose(img, (2, 0, 1))
             img_data[i] = img
             #"""
-            if (i+1) % 100 == 0:
-                print '[+] name: {}'.format(img_path)
+            if (i+1) % 1000 == 0:
+                print '[+] ###{} name: {}'.format(i, img_path)
                 print '[+] number: {}'.format(','.join(map(lambda x: str(x), numbers)))
                 print '[+] label: {}'.format(','.join(map(lambda x: str(x), label_seq[i])))
             #"""
@@ -64,16 +69,19 @@ def write_image_info_into_hdf5(file_name, data_tuple, phase):
 
 def write_h5(train_csv, h5_path):
 
-    char_dict = json.load(open('utils/carplate.json', 'r'))
     images, labels =[], []
     count =0
     for line in open(train_csv, 'r'):
-        if count >100:
-            return
+        #if count >100:
+        #    break 
         line.strip()
         img_path, label = line.split(';')
+        label = label.strip()[1:-1]
+        numbers = [char_dict.get(c.decode('utf-8'), 73) for c in label.split('|')]
+        if len(numbers)>8:
+            print img_path, label, numbers 
+            continue 
         images.append(img_path)
-        numbers = [char_dict.get(c, 73) for c in label.split('|').decode('utf8')]
         labels.append(numbers)
         count += 1
     print '[+] total image number: {}'.format(len(images))
@@ -81,7 +89,7 @@ def write_h5(train_csv, h5_path):
     data_all = list(zip(images, labels))
     random.shuffle(data_all)
 
-    trainning_size = 50   # number of images for trainning
+    trainning_size = 86000   # number of images for trainning
     trainning_data = data_all[:trainning_size]
 
     testing_data = data_all[trainning_size:]
@@ -93,7 +101,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Convert the labeling csv files into h5 files for caffe training')
     parser.add_argument('--train_csv', default='/ssd/zq/parkinglot_pipeline/carplate/data/20181206_crnn_training_data_label_v1.7_k11A500',
                         type=str, help='Image path and labels in CRNN txt labeling file format')
-    parser.add_argument('--h5_path', default='/mnt/soulfs2/wfei/code/crnn.caffe/data/carplate/',
+    parser.add_argument('--h5_path', default='/mnt/soulfs2/wfei/code/crnn.caffe/data/plate/',
                         type=str, help='Path to write the h5 file and list file')
     args = parser.parse_args()
     return args
