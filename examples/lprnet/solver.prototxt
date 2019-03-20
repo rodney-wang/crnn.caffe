@@ -21,4 +21,4 @@ snapshot: 4000
 snapshot_prefix: "./examples/lprnet/model/lpr_plate"
 
 solver_mode: GPU
-clip_gradients: 5000
+clip_gradients: 10000
