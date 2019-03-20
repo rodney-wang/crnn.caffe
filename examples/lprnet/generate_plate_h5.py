@@ -12,6 +12,7 @@ import codecs
 
 CAFFE_ROOT = os.getcwd()   # assume you are in $CAFFE_ROOT$ dir
 IMAGE_WIDTH, IMAGE_HEIGHT = 94, 24
+#IMAGE_WIDTH, IMAGE_HEIGHT = 96, 32
 LABEL_SEQ_LEN = 8
 char_dict = json.load(open('utils/carplate.json', 'r'))
 num_dict =  {v: k for k, v in char_dict.iteritems()}
@@ -101,7 +102,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Convert the labeling csv files into h5 files for caffe training')
     parser.add_argument('--train_csv', default='/ssd/zq/parkinglot_pipeline/carplate/data/20181206_crnn_training_data_label_v1.7_k11A500',
                         type=str, help='Image path and labels in CRNN txt labeling file format')
-    parser.add_argument('--h5_path', default='/mnt/soulfs2/wfei/code/crnn.caffe/data/plate/',
+    parser.add_argument('--h5_path', default='/mnt/soulfs2/wfei/code/crnn.caffe/data/plate/lpr',
                         type=str, help='Path to write the h5 file and list file')
     args = parser.parse_args()
     return args
