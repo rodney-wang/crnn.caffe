@@ -33,7 +33,7 @@ def write_image_info_into_hdf5(file_name, images, phase):
     if total_size % single_size:
         groups += 1
     def process(file_name, images):
-        img_data = np.zeros((len(images), 3, IMAGE_HEIGHT, IMAGE_WIDTH), dtype = np.float32)
+        img_data = np.zeros((len(images), 1, IMAGE_HEIGHT, IMAGE_WIDTH), dtype = np.float32)
         label_seq = 10*np.ones((len(images), LABEL_SEQ_LEN), dtype = np.float32)
         for i, image in enumerate(images):
             img_name = os.path.splitext(image)[0]

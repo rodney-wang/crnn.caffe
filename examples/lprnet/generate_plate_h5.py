@@ -5,51 +5,44 @@ import numpy as np
 from multiprocessing import Process
 import caffe
 import h5py
+import json
+import random
+import argparse
 
 CAFFE_ROOT = os.getcwd()   # assume you are in $CAFFE_ROOT$ dir
-img_path = os.path.join(CAFFE_ROOT, 'data/captcha/')
 IMAGE_WIDTH, IMAGE_HEIGHT = 94, 24
-LABEL_SEQ_LEN = 5
-# captcha images list
-images = filter(lambda x: os.path.splitext(x)[1] == '.png', os.listdir(img_path))
+LABEL_SEQ_LEN = 8
 
-print '[+] total image number: {}'.format(len(images))
-
-np.random.shuffle(images)
-
-def write_image_info_into_file(file_name, images):
+def write_image_info_into_file(file_name, data_tuple):
     with open(file_name, 'w') as f:
-        for image in images:
-            img_name = os.path.splitext(image)[0]
-            numbers = img_name[img_name.find('-')+1:]
-            f.write(os.path.join(img_path, image) + "|" + ','.join(numbers) + "\n")
+        for datum in data_tuple:
+            img_path, numbers = datum
+            f.write(img_path) + "|" + ','.join(numbers) + "\n")
 
 
-def write_image_info_into_hdf5(file_name, images, phase):
-    total_size = len(images)
-    print '[+] total image for {0} is {1}'.format(file_name, len(images))
+def write_image_info_into_hdf5(file_name, data_tuple, phase):
+    total_size = len(data_tuple)
+    print '[+] total image for {0} is {1}'.format(file_name, len(data_tuple))
     single_size = 20000
     groups = total_size / single_size
     if total_size % single_size:
         groups += 1
-    def process(file_name, images):
-        img_data = np.zeros((len(images), 3, IMAGE_HEIGHT, IMAGE_WIDTH), dtype = np.float32)
-        label_seq = 10*np.ones((len(images), LABEL_SEQ_LEN), dtype = np.float32)
-        for i, image in enumerate(images):
-            img_name = os.path.splitext(image)[0]
-            numbers_str = img_name[img_name.find('-')+1:]
-            numbers = np.array(map(lambda x: float(x), numbers_str))
+    def process(file_name, data):
+        img_data = np.zeros((len(data_tuple), 1, IMAGE_HEIGHT, IMAGE_WIDTH), dtype = np.float32)
+        label_seq = 73*np.ones((len(data_tuple), LABEL_SEQ_LEN), dtype = np.float32)
+        for i, datum in enumerate(data_tuple):
+            img_path, numbers = datum
             label_seq[i, :len(numbers)] = numbers
-            img = caffe.io.load_image(os.path.join(img_path, image))
-            img = caffe.io.resize(img, (IMAGE_HEIGHT, IMAGE_WIDTH, 3))
+            img = caffe.io.load_image(img_path, color=False) #load as grayscale
+            img = caffe.io.resize(img, (IMAGE_HEIGHT, IMAGE_WIDTH, 1))
             img = np.transpose(img, (2, 0, 1))
             img_data[i] = img
-            """
+            #"""
             if (i+1) % 100 == 0:
-                print '[+] name: {}'.format(image)
+                print '[+] name: {}'.format(img_path)
                 print '[+] number: {}'.format(','.join(map(lambda x: str(x), numbers)))
                 print '[+] label: {}'.format(','.join(map(lambda x: str(x), label_seq[i])))
-            """
+            #"""
         with h5py.File(file_name, 'w') as f:
             f.create_dataset('data', data = img_data)
             f.create_dataset('label', data = label_seq)
@@ -62,16 +55,51 @@ def write_image_info_into_hdf5(file_name, images, phase):
             start_idx = g*single_size
             end_idx = start_idx + single_size
             if g == groups - 1:
-                end_idx = len(images)
-            p = Process(target = process, args = (h5_file_name, images[start_idx:end_idx]))
+                end_idx = len(data_tuple)
+            p = Process(target = process, args = (h5_file_name, data_tuple[start_idx:end_idx]))
             p.start()
             process_pool.append(p)
         for p in process_pool:
             p.join()
-trainning_size = 8000   # number of images for trainning
-trainning_images = images[:trainning_size]
 
-testing_images = images[trainning_size:]
-write_image_info_into_hdf5(os.path.join(img_path, 'lpr_trainning.list'), trainning_images, 'lprtrain')
-write_image_info_into_hdf5(os.path.join(img_path, 'lpr_testing.list'), testing_images, 'lprtest')
-write_image_info_into_file(os.path.join(img_path, 'lpr_testing-images.list'), testing_images)
+def write_h5(train_csv, h5_path):
+
+    char_dict = json.load(open('utils/carplate.json', 'r'))
+    images, labels =[], []
+    count =0
+    for line in open(train_csv, 'r'):
+        if count >100:
+            return
+        line.strip()
+        img_path, label = line.split(';')
+        images.append(img_path)
+        numbers = [char_dict.get(c, 73) for c in label.split('|').decode('utf8')]
+        labels.append(numbers)
+        count += 1
+    print '[+] total image number: {}'.format(len(images))
+
+    data_all = list(zip(images, labels))
+    random.shuffle(data_all)
+
+    trainning_size = 50   # number of images for trainning
+    trainning_data = data_all[:trainning_size]
+
+    testing_data = data_all[trainning_size:]
+    write_image_info_into_hdf5(os.path.join(h5_path, 'plate_trainning.list'), trainning_data, 'train')
+    write_image_info_into_hdf5(os.path.join(h5_path, 'plate_testing.list'), testing_data, 'test')
+    write_image_info_into_file(os.path.join(h5_path, 'plate_testing-images.list'), testing_data)
+
+def parse_args():
+    parser = argparse.ArgumentParser(description='Convert the labeling csv files into h5 files for caffe training')
+    parser.add_argument('--train_csv', default='/ssd/zq/parkinglot_pipeline/carplate/data/20181206_crnn_training_data_label_v1.7_k11A500',
+                        type=str, help='Image path and labels in CRNN txt labeling file format')
+    parser.add_argument('--h5_path', default='/mnt/soulfs2/wfei/code/crnn.caffe/data/carplate/',
+                        type=str, help='Path to write the h5 file and list file')
+    args = parser.parse_args()
+    return args
+
+
+if __name__ == '__main__':
+    args = parse_args()
+
+    write_h5(args.train_csv, args.h5_path)
