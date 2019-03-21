@@ -2,7 +2,7 @@
 import sys
 #sys.path.append('~/Desktop/crnn.caffe/python')
 import caffe
-
+import json
 from PIL import Image
 import numpy as np
 
@@ -18,11 +18,16 @@ caffe.set_mode_gpu()
 net = caffe.Net(deploy_file, model_file, caffe.TEST)
 
 # load test img
-img = Image.open(test_img)
-img = img.resize((96, 32), Image.ANTIALIAS)
-in_ = np.array(img, dtype=np.float32)
-in_ = in_[:,:,::-1]
-in_ = in_.transpose((2,0,1))
+IMAGE_WIDTH, IMAGE_HEIGHT = 96, 32
+img = caffe.io.load_image(test_img, color=False) #load as grayscale
+img = caffe.io.resize(img, (IMAGE_HEIGHT, IMAGE_WIDTH, 1))
+in_ = np.transpose(img, (2, 0, 1))
+#img = Image.open(test_img)
+#img = img.resize((96, 32), Image.ANTIALIAS)
+#print img.shape
+#in_ = np.array(img, dtype=np.float32)
+#in_ = in_[:,:,::-1]
+#in_ = in_.transpose((2,0,1))
 
 # 执行上面设置的图片预处理操作，并将图片载入到blob中
 # shape for input (data blob is N x C x H x W), set data
@@ -39,18 +44,20 @@ print('result shape is:', res.shape)
 
 # 取出标签文档
 char_set = []
-with open('label.txt', 'r') as f:
+"""with open('label.txt', 'r') as f:
     line = f.readline()
     while line:
         line = line.strip('\n\r')
         # print(line)
         char_set.append(str(line))
         line = f.readline()
-
-
+"""
+char_dict = json.load(open('../lprnet/utils/carplate.json', 'r'))
+char_set =  {v: k for k, v in char_dict.iteritems()}
+char_set[73]='-'
 # 取出最多可能的label标签
-for i in range(32):
+for i in range(24):
     data = res[i, :, :]
     index = np.argmax(data)
     #print(index, data[0, index])
-    print(char_set[index])
+    print char_set[index].encode('utf8')
