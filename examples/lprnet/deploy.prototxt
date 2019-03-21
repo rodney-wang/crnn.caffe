@@ -865,37 +865,11 @@ layer {
   }
 }
 layer {
-	name: "ctc_loss"
-	type: "CtcLoss"
-	bottom: "permute_c6"
-	bottom: "label"
-	top: "ctc_loss"
-	loss_weight: 1.0
-	ctc_loss_param {
-		blank_label: 73
-		alphabet_size: 74
-    	time_step: 24
-	}
-}
-
-layer {
-  name: "permute_fc"
-  type: "Permute"
-  bottom: "conv6"
-  top: "permute_fc"
-  permute_param {
-    order: 0
-    order: 2
-    order: 1
-  }
-}
-layer {
-  name: "accuracy"
-  type: "LabelsequenceAccuracy"
-  bottom: "permute_fc"
-  bottom: "label"
-  top: "accuracy"
-  labelsequence_accuracy_param {
-    blank_label: 73
+  name: "probs"
+  type: "Softmax"
+  bottom: "permute_c6"
+  top: "probs"
+  softmax_param {
+    axis: 2
   }
 }
