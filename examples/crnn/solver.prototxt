@@ -1,6 +1,6 @@
 net: "./examples/crnn/crnn.prototxt"
 
-test_iter: 50
+test_iter: 336 
 test_interval: 200
 
 base_lr: 0.0001

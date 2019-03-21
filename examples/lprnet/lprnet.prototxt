@@ -23,7 +23,7 @@ layer {
     }
     hdf5_data_param {
         source: "./data/plate/lpr/plate_testing.list"
-        batch_size:128 
+        batch_size: 128 
     }
 }
 layer {

@@ -1,14 +1,15 @@
 net: "./examples/lprnet/lprnet.prototxt"
 
-test_iter: 50
-test_interval: 200
+test_iter: 670 
+test_interval: 400
 
-base_lr: 0.0001
+base_lr: 0.001
 lr_policy: "multistep"
 stepvalue: 5000
 stepvalue: 10000
+type: "Adam"
 
-gamma: 0.1
+gamma: 0.5
 
 display: 100
 
@@ -17,7 +18,7 @@ momentum: 0.9
 
 weight_decay: 0.0005
 
-snapshot: 4000
+snapshot: 500
 snapshot_prefix: "./examples/lprnet/model/lpr_plate"
 
 solver_mode: GPU
