@@ -27,10 +27,11 @@ def run_crnn_and_write_result(plate_file, out_dir, pocr):
         out_file = os.path.join(out_dir, fname)
 
         out_str = ' '.join([chars, str(score)])
-        print(fname, out_str.encode('utf-8'))
+        print fname, out_str
         # with open(out_file, 'w', encoding='utf-8') as ff:
         with open(out_file, 'w') as ff:
-            ff.write(out_str.encode('utf-8'))
+            #ff.write(out_str.encode('utf-8'))
+            ff.write(out_str)
     return True
 
 
@@ -41,7 +42,7 @@ def batch_benchmark(img_dir, out_dir, model_path):
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
-    pocr = PlateOCR()
+    pocr = PlateOCR(model_path)
     start_time = time.time()
     for plate_file in fnames:
         run_crnn_and_write_result(plate_file, out_dir, pocr)

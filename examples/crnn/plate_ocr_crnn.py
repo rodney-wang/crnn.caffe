@@ -6,7 +6,7 @@ import caffe
 
 class PlateOCR:
 
-    def __init__(self, caffemodel='/mnt/soulfs2/wfei/code/crnn.caffe/examples/crnn/model/crnn_plate_iter_120000.caffemodel'):
+    def __init__(self, caffemodel='/mnt/soulfs2/wfei/code/crnn.caffe/examples/crnn/model/crnn_plate_iter_12000.caffemodel'):
         char_dict = json.load(open('/mnt/soulfs2/wfei/code/crnn.caffe/examples/lprnet/utils/carplate.json', 'r'))
         self.char_set = {v: k for k, v in char_dict.iteritems()}
         self.net = self._init_det(caffemodel)
@@ -42,29 +42,29 @@ class PlateOCR:
         # get result
         res = net.blobs['probs'].data
         chars, score = self.decoder(res)
-        return res, score
+        return chars, score
 
     def decoder(self, res):
         score = 0
-        chars = []
+        chars = "" 
         for i in range(24):
             data = res[i, :, :]
             index = np.argmax(data)
             if i == 0:
                 prev = index
                 if index != 73:
-                    chars.append(self.char_set[index].encode('utf8'))
+                    chars += self.char_set[index].encode('utf8')
                     score += data[0, index]
                 continue
             if index == 73:
                 prev = -1
             else:
                 if index != prev:
-                    chars.append(self.char_set[index].encode('utf8'))
+                    chars += self.char_set[index].encode('utf8')
                     score += data[0, index]
                 prev = index
 
-            #print(index, data[0, index])
+           #print index, data[0, index]
             #chars.append(self.char_set[index].encode('utf8'))
 
         return chars, score
