@@ -12,10 +12,13 @@ class PlateOCR:
         self.net = self._init_det(caffemodel)
 
     def _init_det(self, caffemodel):
-        GPU_ID = 0
-        caffe.set_mode_gpu()
-        caffe.set_device(GPU_ID)
-
+        gpu = True
+        if gpu:
+            GPU_ID = 0
+            caffe.set_mode_gpu()
+            caffe.set_device(GPU_ID)
+        else:
+            caffe.set_mode_cpu()
         model_fold = '/mnt/soulfs2/wfei/code/crnn.caffe/examples/crnn/'
         prototxt = model_fold + 'deploy.prototxt'
         #caffemodel = model_fold + 'model/crnn_plate_iter_120000.caffemodel'

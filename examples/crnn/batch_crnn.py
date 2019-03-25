@@ -53,9 +53,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Plate Segmentation')
     parser.add_argument('--img_dir', default='/ssd/wfei/data/testing_data/k11_plates_v1.2',
                         type=str, help='Input test image dir')
-    parser.add_argument('--out_dir', default='/ssd/wfei/data/testing_data/k11_crnn_caffe_v1.0',
+    parser.add_argument('--out_dir', default='/ssd/wfei/data/testing_data/k11_crnn_caffe_v1.0_test_cpu',
                         type=str, help='Output image dir')
-    parser.add_argument('--model', default='/mnt/soulfs2/wfei/code/crnn.caffe/examples/crnn/model/crnn_plate_iter_120000.caffemodel',
+    parser.add_argument('--model', default='/mnt/soulfs2/wfei/code/crnn.caffe/examples/crnn/model/crnn_plate_iter_60000.caffemodel',
                         type=str, help='Caffe model path')
 
     args = parser.parse_args()

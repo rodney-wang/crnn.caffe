@@ -1,9 +1,9 @@
 net: "./examples/lprnet/lprnet.prototxt"
 
-test_iter: 670 
-test_interval: 400
+test_iter: 10  
+test_interval:670 
 
-base_lr: 0.001
+base_lr: 0.0001
 lr_policy: "multistep"
 stepvalue: 5000
 stepvalue: 10000
@@ -13,13 +13,15 @@ gamma: 0.5
 
 display: 100
 
-max_iter: 60000
+max_iter: 10000
 momentum: 0.9
+momentum2: 0.999
 
-weight_decay: 0.0005
+weight_decay: 0.005
 
-snapshot: 500
+snapshot: 400
 snapshot_prefix: "./examples/lprnet/model/lpr_plate"
+regularization_type: "L2"
 
 solver_mode: GPU
-clip_gradients: 10000
+clip_gradients: 1000
