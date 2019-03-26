@@ -60,6 +60,7 @@ def write_image_info_into_hdf5(file_name, data_tuple, phase):
         with h5py.File(file_name, 'w') as f:
             f.create_dataset('data', data = img_data)
             f.create_dataset('label', data = label_seq)
+            print '=== H5 data written to ', file_name
     with open(file_name, 'w') as f:
         workspace = os.path.split(file_name)[0]
         process_pool = []
@@ -81,8 +82,8 @@ def write_h5(train_csv, h5_path, prefix, list_name):
     images, labels =[], []
     count =0
     for line in open(train_csv, 'r'):
-        #if count >100:
-        #    break 
+        if count >100:
+            break
         line.strip()
         img_path, label = line.split(';')
         label = label.strip()[1:-1]
@@ -98,7 +99,7 @@ def write_h5(train_csv, h5_path, prefix, list_name):
     data_all = list(zip(images, labels))
     random.shuffle(data_all)
 
-    trainning_size = 90000   # number of images for trainning
+    trainning_size = 100   # number of images for trainning
     trainning_data = data_all[:trainning_size]
 
     #testing_data = data_all[trainning_size:]
@@ -112,7 +113,7 @@ def parse_args():
                         type=str, help='Image path and labels in CRNN txt labeling file format')
     parser.add_argument('--h5_path', default='/mnt/soulfs2/wfei/code/crnn.caffe/data/plate/crnn',
                         type=str, help='Path to write the h5 file and list file')
-    parser.add_argument('--prefix', default='invert', type=str, help='h5 file prefix')
+    parser.add_argument('--prefix', default='train_aug', type=str, help='h5 file prefix')
     parser.add_argument('--list_name', default='plate_trainning_aug.list', type=str, help='list filename containing the list of h5 files')
     args = parser.parse_args()
     return args
