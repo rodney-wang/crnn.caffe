@@ -3,18 +3,19 @@
 import os
 import numpy as np
 from multiprocessing import Process
-import caffe
+#import caffe
+import cv2
 import h5py
 import json
 import random
 import argparse
 import codecs
+from augment_data import augment_data
 
 CAFFE_ROOT = os.getcwd()   # assume you are in $CAFFE_ROOT$ dir
-#IMAGE_WIDTH, IMAGE_HEIGHT = 94, 24
 IMAGE_WIDTH, IMAGE_HEIGHT = 96, 32
 LABEL_SEQ_LEN = 8
-char_dict = json.load(open('utils/carplate.json', 'r'))
+char_dict = json.load(open('/mnt/soulfs2/wfei/code/crnn.caffe/examples/lprnet/utils/carplate.json', 'r'))
 num_dict =  {v: k for k, v in char_dict.iteritems()}
 
 def write_image_info_into_file(file_name, data_tuple):
@@ -39,9 +40,15 @@ def write_image_info_into_hdf5(file_name, data_tuple, phase):
         for i, datum in enumerate(data_tuple):
             img_path, numbers = datum
             label_seq[i, :len(numbers)] = numbers
-            img = caffe.io.load_image(img_path, color=False) #load as grayscale
-            img = 1.0-img
-            img = caffe.io.resize(img, (IMAGE_HEIGHT, IMAGE_WIDTH, 1))
+            #img = caffe.io.load_image(img_path, color=False) #load as grayscale
+            #img = caffe.io.resize(img, (IMAGE_HEIGHT, IMAGE_WIDTH, 1))
+
+            img = cv2.imread(img_path)
+            img = augment_data(img)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            img = cv2.resize(img, (IMAGE_WIDTH, IMAGE_HEIGHT))
+            img = img[..., np.newaxis]
+            img = img/255.
             img = np.transpose(img, (2, 0, 1))
             img_data[i] = img
             #"""
@@ -69,7 +76,7 @@ def write_image_info_into_hdf5(file_name, data_tuple, phase):
         for p in process_pool:
             p.join()
 
-def write_h5(train_csv, h5_path, prefix):
+def write_h5(train_csv, h5_path, prefix, list_name):
 
     images, labels =[], []
     count =0
@@ -95,7 +102,8 @@ def write_h5(train_csv, h5_path, prefix):
     trainning_data = data_all[:trainning_size]
 
     #testing_data = data_all[trainning_size:]
-    write_image_info_into_hdf5(os.path.join(h5_path, 'plate_trainning_invert.list'), trainning_data, prefix)
+    #write_image_info_into_hdf5(os.path.join(h5_path, 'plate_trainning_aug.list'), trainning_data, prefix)
+    write_image_info_into_hdf5(os.path.join(h5_path, list_name), trainning_data, prefix)
 
 
 def parse_args():
@@ -105,6 +113,7 @@ def parse_args():
     parser.add_argument('--h5_path', default='/mnt/soulfs2/wfei/code/crnn.caffe/data/plate/crnn',
                         type=str, help='Path to write the h5 file and list file')
     parser.add_argument('--prefix', default='invert', type=str, help='h5 file prefix')
+    parser.add_argument('--list_name', default='plate_trainning_aug.list', type=str, help='list filename containing the list of h5 files')
     args = parser.parse_args()
     return args
 
@@ -112,4 +121,4 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
 
-    write_h5(args.train_csv, args.h5_path, args.prefix)
+    write_h5(args.train_csv, args.h5_path, args.prefix, args.list_name)
