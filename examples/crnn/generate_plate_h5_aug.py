@@ -45,7 +45,6 @@ def write_image_info_into_hdf5(file_name, data_tuple, phase):
 
             img = cv2.imread(img_path)
             img = augment_data(img)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             img = cv2.resize(img, (IMAGE_WIDTH, IMAGE_HEIGHT))
             img = img[..., np.newaxis]
             img = img/255.
