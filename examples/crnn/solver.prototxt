@@ -1,9 +1,9 @@
 net: "./examples/crnn/crnn.prototxt"
 
 test_iter: 336 
-test_interval: 200
+test_interval: 1000
 
-base_lr: 0.0001
+base_lr: 0.001
 lr_policy: "multistep"
 stepvalue: 5000
 stepvalue: 10000
@@ -12,13 +12,13 @@ gamma: 0.1
 
 display: 100
 
-max_iter: 100000
+max_iter: 40000
 momentum: 0.9
 
 weight_decay: 0.0005
 
-snapshot: 5000
-snapshot_prefix: "./examples/crnn/model_aug/crnn_aug"
+snapshot: 4000
+snapshot_prefix: "./examples/crnn/model_aug2/crnn_aug"
 
 solver_mode: GPU
 clip_gradients: 5000

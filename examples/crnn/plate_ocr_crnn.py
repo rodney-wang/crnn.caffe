@@ -49,6 +49,7 @@ class PlateOCR:
 
     def decoder(self, res):
         score = 0
+        scores =[]
         chars = "" 
         for i in range(24):
             data = res[i, :, :]
@@ -58,6 +59,7 @@ class PlateOCR:
                 if index != 73:
                     chars += self.char_set[index].encode('utf8')
                     score += data[0, index]
+                    scores.append( data[0, index] )
                 continue
             if index == 73:
                 prev = -1
@@ -65,11 +67,16 @@ class PlateOCR:
                 if index != prev:
                     chars += self.char_set[index].encode('utf8')
                     score += data[0, index]
+                    scores.append( data[0, index] )
                 prev = index
 
-           #print index, data[0, index]
-            #chars.append(self.char_set[index].encode('utf8'))
-
+        clen = len(chars.decode('utf8'))
+        if clen == 8:
+            score = score*7.0/8.0
+        """
+        score = np.min(scores)        
+        print scores
+        """
         return chars, score
 
 if __name__ == '__main__':
