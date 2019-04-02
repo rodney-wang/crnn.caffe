@@ -76,7 +76,7 @@ def write_image_info_into_hdf5(file_name, data_tuple, phase):
         for p in process_pool:
             p.join()
 
-def write_h5(train_csv, h5_path, prefix, list_name):
+def write_h5(train_csv, h5_path, prefix, list_name, aug_num):
 
     images, labels =[], []
     count =0
@@ -90,9 +90,10 @@ def write_h5(train_csv, h5_path, prefix, list_name):
         if len(numbers)>8:
             print img_path, label, numbers 
             continue 
-        images.append(img_path)
-        labels.append(numbers)
-        count += 1
+        for i in range(aug_num):
+            images.append(img_path)
+            labels.append(numbers)
+            count += 1
     print '[+] total image number: {}'.format(len(images))
 
     data_all = list(zip(images, labels))
@@ -114,6 +115,8 @@ def parse_args():
                         type=str, help='Path to write the h5 file and list file')
     parser.add_argument('--prefix', default='train_aug', type=str, help='h5 file prefix')
     parser.add_argument('--list_name', default='plate_trainning_aug.list', type=str, help='list filename containing the list of h5 files')
+    parser.add_argument('--aug_num', default=1, type=int, help='number of times to perform data augmentation')
+
     args = parser.parse_args()
     return args
 
@@ -121,4 +124,4 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
 
-    write_h5(args.train_csv, args.h5_path, args.prefix, args.list_name)
+    write_h5(args.train_csv, args.h5_path, args.prefix, args.list_name, args.aug_num)
