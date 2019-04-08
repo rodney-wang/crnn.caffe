@@ -83,6 +83,7 @@ def write_h5(train_csv, h5_path, prefix, list_name, aug_num):
     for line in open(train_csv, 'r'):
         #if count >100:
         #    break
+        print count, line
         line.strip()
         img_path, label = line.split(';')
         label = label.strip()[1:-1]
@@ -99,8 +100,9 @@ def write_h5(train_csv, h5_path, prefix, list_name, aug_num):
     data_all = list(zip(images, labels))
     random.shuffle(data_all)
 
-    trainning_size = 90000   # number of images for trainning
-    trainning_data = data_all[:trainning_size]
+    #trainning_size = 182000   # number of images for trainning
+    #trainning_data = data_all[:trainning_size]
+    trainning_data = data_all
 
     #testing_data = data_all[trainning_size:]
     #write_image_info_into_hdf5(os.path.join(h5_path, 'plate_trainning_aug.list'), trainning_data, prefix)
