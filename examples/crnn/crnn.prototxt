@@ -9,7 +9,7 @@ layer {
     }
     hdf5_data_param {
         #source: "./data/plate/crnn/plate_trainning_all.list"
-        source: "./data/plate/crnn/k11_20190404.list"
+        source: "./data/plate/crnn/k11_20190408.list"
         batch_size: 256
     }
 }

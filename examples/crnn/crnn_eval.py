@@ -43,7 +43,7 @@ def crnn_eval_end2end(ocrtxt_file, out_dir, model_path, skip):
     start_time = time.time()
     for line in open(ocrtxt_file, 'r'):
         plate_file, label = line.split(';')
-        run_crnn_and_write_result(plate_file, out_dir, pocr, ext)
+        run_crnn_and_write_result(plate_file, out_dir, pocr)
     print("--- %s seconds ---" % (time.time() - start_time))
     eval(ocrtxt_file, out_dir, skip)
 
