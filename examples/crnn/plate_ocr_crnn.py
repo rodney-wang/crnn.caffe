@@ -81,8 +81,9 @@ class PlateOCR:
 
 if __name__ == '__main__':
 
-    test_img = '/mnt/soulfs2/wfei/data/plate_sample.jpg'
-    pocr = PlateOCR()
+    test_img = '/mnt/soulfs2/wfei/tmp/plate_crop.jpg'
+    pocr = PlateOCR(caffemodel='/mnt/soulfs2/wfei/models/crnn_caffe/k11/crnn_k11_energy_v1.5.caffemodel')
+    #pocr = PlateOCR(caffemodel='/mnt/soulfs2/wfei/code/crnn.caffe/examples/crnn/model_k11/crnn_k11_energy_iter_17500.caffemodel')
     chars, score = pocr(test_img)
     print chars, score
 

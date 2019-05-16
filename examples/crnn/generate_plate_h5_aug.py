@@ -44,7 +44,8 @@ def write_image_info_into_hdf5(file_name, data_tuple, phase):
             #img = caffe.io.resize(img, (IMAGE_HEIGHT, IMAGE_WIDTH, 1))
 
             img = cv2.imread(img_path)
-            img = augment_data(img)
+            #img = augment_data(img)
+            img = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
             img = cv2.resize(img, (IMAGE_WIDTH, IMAGE_HEIGHT))
             img = img[..., np.newaxis]
             img = img/255.
@@ -83,7 +84,8 @@ def write_h5(train_csv, h5_path, prefix, list_name, aug_num):
     for line in open(train_csv, 'r'):
         #if count >100:
         #    break
-        print count, line
+        if count % 10000 ==0: 
+            print count, line
         line.strip()
         img_path, label = line.split(';')
         label = label.strip()[1:-1]
