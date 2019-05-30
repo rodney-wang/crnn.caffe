@@ -79,12 +79,20 @@ class PlateOCR:
         """
         return chars, score
 
-if __name__ == '__main__':
+def parse_args():
+    parser = argparse.ArgumentParser(description='Plate OCR with CRNN caffe')
+    parser.add_argument('-i', '--img_path',
+                        default='/mnt/soulfs2/wfei/tmp/car_sample_plate.jpg',
+                        type=str, help='Input test image dir')
+    args = parser.parse_args()
+    return args
 
-    test_img = '/mnt/soulfs2/wfei/tmp/plate_crop.jpg'
+if __name__ == '__main__':
+    args = parse_args()
+    test_img = '/mnt/soulfs2/wfei/tmp/car_sample_plate.jpg'
     pocr = PlateOCR(caffemodel='/mnt/soulfs2/wfei/models/crnn_caffe/k11/crnn_k11_energy_v1.5.caffemodel')
     #pocr = PlateOCR(caffemodel='/mnt/soulfs2/wfei/code/crnn.caffe/examples/crnn/model_k11/crnn_k11_energy_iter_17500.caffemodel')
-    chars, score = pocr(test_img)
+    chars, score = pocr(args.img_path)
     print chars, score
 
 
