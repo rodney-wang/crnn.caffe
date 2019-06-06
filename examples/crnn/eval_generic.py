@@ -88,7 +88,7 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
 
-    print "Skip {} characters for evaluation!!!".format(skip)
+    print "Skip {} characters for evaluation!!!".format(args.skip)
 
     #res_base = '/ssd/wfei/data/benchmark/k11/'
     #res_dir = join(res_base, args.res_dir)
