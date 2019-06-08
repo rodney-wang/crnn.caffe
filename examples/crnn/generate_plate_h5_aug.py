@@ -11,6 +11,7 @@ import random
 import argparse
 import codecs
 from augment_data import augment_data
+import pdb
 
 CAFFE_ROOT = os.getcwd()   # assume you are in $CAFFE_ROOT$ dir
 IMAGE_WIDTH, IMAGE_HEIGHT = 96, 32
@@ -42,8 +43,13 @@ def write_image_info_into_hdf5(file_name, data_tuple, phase):
             label_seq[i, :len(numbers)] = numbers
 
             img = cv2.imread(img_path)
+            if img is None: 
+                continue
+
             if do_aug:
                 img = augment_data(img)
+                if img is None: 
+                    continue
             img = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
             img = cv2.resize(img, (IMAGE_WIDTH, IMAGE_HEIGHT))
             img = img[..., np.newaxis]
@@ -90,9 +96,12 @@ def write_h5(train_csv, h5_path, prefix, list_name, do_aug):
         label = label.strip()[1:-1]
         numbers = [char_dict.get(c.decode('utf-8'), 73) for c in label.split('|')]
         if len(numbers)>8:
-            print img_path, label, numbers 
+            print "Plate label too long!!!",img_path, label, numbers 
             continue
 
+        #if not os.path.exists(img_path):
+        #    print "None exist", img_path
+        #    return 
         images.append(img_path)
         labels.append(numbers)
         aug.append(False)
