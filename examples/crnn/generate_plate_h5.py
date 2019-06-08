@@ -38,12 +38,13 @@ def write_image_info_into_hdf5(file_name, data_tuple, phase):
         img_data = np.zeros((len(data_tuple), 1, IMAGE_HEIGHT, IMAGE_WIDTH), dtype = np.float32)
         label_seq = 73*np.ones((len(data_tuple), LABEL_SEQ_LEN), dtype = np.float32)
         for i, datum in enumerate(data_tuple):
-            img_path, numbers, do_aug = datum
+            img_path, numbers = datum
             label_seq[i, :len(numbers)] = numbers
+            #img = caffe.io.load_image(img_path, color=False) #load as grayscale
+            #img = caffe.io.resize(img, (IMAGE_HEIGHT, IMAGE_WIDTH, 1))
 
             img = cv2.imread(img_path)
-            if do_aug:
-                img = augment_data(img)
+            #img = augment_data(img)
             img = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
             img = cv2.resize(img, (IMAGE_WIDTH, IMAGE_HEIGHT))
             img = img[..., np.newaxis]
@@ -76,9 +77,9 @@ def write_image_info_into_hdf5(file_name, data_tuple, phase):
         for p in process_pool:
             p.join()
 
-def write_h5(train_csv, h5_path, prefix, list_name, do_aug):
+def write_h5(train_csv, h5_path, prefix, list_name, aug_num):
 
-    images, labels, aug =[], [], []
+    images, labels =[], []
     count =0
     for line in open(train_csv, 'r'):
         #if count >100:
@@ -91,21 +92,14 @@ def write_h5(train_csv, h5_path, prefix, list_name, do_aug):
         numbers = [char_dict.get(c.decode('utf-8'), 73) for c in label.split('|')]
         if len(numbers)>8:
             print img_path, label, numbers 
-            continue
-
-        images.append(img_path)
-        labels.append(numbers)
-        aug.append(False)
-        count += 1
-
-        if do_aug:
+            continue 
+        for i in range(aug_num):
             images.append(img_path)
             labels.append(numbers)
-            aug.append(True)
             count += 1
     print '[+] total image number: {}'.format(len(images))
 
-    data_all = list(zip(images, labels, aug))
+    data_all = list(zip(images, labels))
     random.shuffle(data_all)
 
     #trainning_size = 182000   # number of images for trainning
@@ -125,7 +119,7 @@ def parse_args():
                         type=str, help='Path to write the h5 file and list file')
     parser.add_argument('--prefix', default='train_aug', type=str, help='h5 file prefix')
     parser.add_argument('--list_name', default='plate_trainning_aug.list', type=str, help='list filename containing the list of h5 files')
-    parser.add_argument('--aug', action='store_true', help='whether to perform data augmentation')
+    parser.add_argument('--aug_num', default=1, type=int, help='number of times to perform data augmentation')
 
     args = parser.parse_args()
     return args
@@ -134,4 +128,4 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
 
-    write_h5(args.train_csv, args.h5_path, args.prefix, args.list_name, args.aug)
+    write_h5(args.train_csv, args.h5_path, args.prefix, args.list_name, args.aug_num)
