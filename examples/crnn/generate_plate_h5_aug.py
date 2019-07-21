@@ -16,7 +16,7 @@ import pdb
 CAFFE_ROOT = os.getcwd()   # assume you are in $CAFFE_ROOT$ dir
 IMAGE_WIDTH, IMAGE_HEIGHT = 96, 32
 LABEL_SEQ_LEN = 8
-char_dict = json.load(open('/mnt/soulfs2/wfei/code/crnn.caffe/examples/lprnet/utils/carplate.json', 'r'))
+char_dict = json.load(open('./utils/carplate.json', 'r'))
 num_dict =  {v: k for k, v in char_dict.iteritems()}
 
 def write_image_info_into_file(file_name, data_tuple):
@@ -37,7 +37,7 @@ def write_image_info_into_hdf5(file_name, data_tuple, phase):
         groups += 1
     def process(file_name, data):
         img_data = np.zeros((len(data_tuple), 1, IMAGE_HEIGHT, IMAGE_WIDTH), dtype = np.float32)
-        label_seq = 73*np.ones((len(data_tuple), LABEL_SEQ_LEN), dtype = np.float32)
+        label_seq = 33*np.ones((len(data_tuple), LABEL_SEQ_LEN), dtype = np.float32)
         for i, datum in enumerate(data_tuple):
             img_path, numbers, do_aug = datum
             label_seq[i, :len(numbers)] = numbers
@@ -94,7 +94,7 @@ def write_h5(train_csv, h5_path, prefix, list_name, do_aug):
         line.strip()
         img_path, label = line.split(';')
         label = label.strip()[1:-1]
-        numbers = [char_dict.get(c.decode('utf-8'), 73) for c in label.split('|')]
+        numbers = [char_dict.get(c.decode('utf-8'), 33) for c in label.split('|')]
         if len(numbers)>8:
             print "Plate label too long!!!",img_path, label, numbers 
             continue
