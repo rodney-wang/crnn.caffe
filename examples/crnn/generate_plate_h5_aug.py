@@ -121,7 +121,7 @@ def write_h5(train_csv, h5_path, prefix, list_name, do_aug):
     #trainning_data = data_all[:trainning_size]
     trainning_data = data_all
 
-    testing_data = data_all[:2048]
+    #testing_data = data_all[:2048]
     write_image_info_into_hdf5(os.path.join(h5_path, list_name), trainning_data, prefix)
     #write_image_info_into_hdf5(os.path.join(h5_path, "plate_testing_wanda.list"), testing_data, 'wanda_test')
 
