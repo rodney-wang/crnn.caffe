@@ -1,13 +1,14 @@
 #coding=utf-8
 import numpy as np
 import json
+import argparse
 import caffe
 #import cv2
 
 class PlateOCR:
 
-    def __init__(self, caffemodel='/mnt/soulfs2/wfei/code/crnn.caffe/examples/crnn/model/crnn_plate_iter_12000.caffemodel'):
-        char_dict = json.load(open('/mnt/soulfs2/wfei/code/crnn.caffe/examples/lprnet/utils/carplate.json', 'r'))
+    def __init__(self, caffemodel='/ssd/wfei/code/crnn.caffe/examples/crnn/model_hk/crnn_hkonly_iter_40000.caffemodel'):
+        char_dict = json.load(open('./utils/carplate.json', 'r'))
         self.char_set = {v: k for k, v in char_dict.iteritems()}
         self.net = self._init_det(caffemodel)
 
@@ -56,12 +57,12 @@ class PlateOCR:
             index = np.argmax(data)
             if i == 0:
                 prev = index
-                if index != 73:
+                if index != 33:
                     chars += self.char_set[index].encode('utf8')
                     score += data[0, index]
                     scores.append( data[0, index] )
                 continue
-            if index == 73:
+            if index == 33:
                 prev = -1
             else:
                 if index != prev:
@@ -71,8 +72,7 @@ class PlateOCR:
                 prev = index
 
         clen = len(chars.decode('utf8'))
-        if clen == 8:
-            score = score*7.0/8.0
+        score = 10*score/clen
         """
         score = np.min(scores)        
         print scores
