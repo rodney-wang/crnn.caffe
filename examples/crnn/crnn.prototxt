@@ -8,8 +8,7 @@ layer {
         phase: TRAIN
     }
     hdf5_data_param {
-        source: "./data/plate/crnn/plate_training_wanda.list"
-        #source: "./data/plate/crnn/k11_20190408.list"
+        source: "./data/plate/crnn/hkonly_train.list"
         batch_size: 256
     }
 }
@@ -23,7 +22,7 @@ layer {
         phase: TEST
     }
     hdf5_data_param {
-        source: "./data/plate/crnn/plate_testing_wanda.list"
+        source: "./data/plate/crnn/hkonly_test.list"
         batch_size: 256
     }
 }
@@ -577,7 +576,7 @@ layer {
     decay_mult: 0
   }
   inner_product_param {
-    num_output: 74
+    num_output: 34
 	axis: 2
     weight_filler {
       type: "xavier"
@@ -596,8 +595,8 @@ layer {
 	top: "ctc_loss"
 	loss_weight: 1.0
 	ctc_loss_param {
-		blank_label: 73
-		alphabet_size: 74
+		blank_label: 33
+		alphabet_size: 34
     	time_step: 24
 	}
 }
@@ -620,6 +619,6 @@ layer {
   bottom: "label"
   top: "accuracy"
   labelsequence_accuracy_param {
-    blank_label: 74
+    blank_label: 34
   }
 }

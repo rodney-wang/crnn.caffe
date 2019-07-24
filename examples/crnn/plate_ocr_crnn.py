@@ -20,7 +20,8 @@ class PlateOCR:
             caffe.set_device(GPU_ID)
         else:
             caffe.set_mode_cpu()
-        model_fold = '/mnt/soulfs2/wfei/code/crnn.caffe/examples/crnn/'
+        #model_fold = '/mnt/soulfs2/wfei/code/crnn.caffe/examples/crnn/'
+        model_fold = '/ssd/wfei/code/crnn.caffe/examples/crnn/'
         prototxt = model_fold + 'deploy.prototxt'
         #caffemodel = model_fold + 'model/crnn_plate_iter_120000.caffemodel'
         net = caffe.Net(prototxt, caffemodel, caffe.TEST)
@@ -72,7 +73,8 @@ class PlateOCR:
                 prev = index
 
         clen = len(chars.decode('utf8'))
-        score = 10*score/clen
+        if clen != 0:
+            score = 10*score/clen
         """
         score = np.min(scores)        
         print scores

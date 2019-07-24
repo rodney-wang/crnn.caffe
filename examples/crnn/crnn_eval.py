@@ -20,8 +20,8 @@ def run_crnn_and_write_result(plate_file, out_dir, pocr):
     chars, score = pocr(plate_file)
 
     if score >=0 and len(chars) != 0:
-        fname = os.path.basename(plate_file).split('_plate')[0]
-        fname = fname.replace('.jpg', '.txt')
+        fname = os.path.basename(plate_file) #split('_plate')[0]
+        fname = fname.replace('.jpg', '')
 
         out_file = os.path.join(out_dir, fname)
 
@@ -49,8 +49,8 @@ def crnn_eval_end2end(ocrtxt_file, out_dir, model_path, skip):
 
     print("\n--- Skip 0 evaluation ---") 
     eval(ocrtxt_file, out_dir, 0)
-    print("\n--- Skip 1 evaluation ---") 
-    eval(ocrtxt_file, out_dir, 1)
+    #print("\n--- Skip 1 evaluation ---") 
+    #eval(ocrtxt_file, out_dir, 1)
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Plate Segmentation')

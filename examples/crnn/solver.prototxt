@@ -1,6 +1,6 @@
 net: "./examples/crnn/crnn.prototxt"
 
-test_iter: 336 
+test_iter: 2 
 test_interval: 1000
 
 base_lr: 0.001
@@ -20,7 +20,7 @@ momentum2: 0.999
 weight_decay: 0.0005
 
 snapshot: 5000
-snapshot_prefix: "./examples/crnn/model_wanda/crnn_wanda"
+snapshot_prefix: "./examples/crnn/model_hk/crnn_hkonly"
 
 solver_mode: GPU
 clip_gradients: 5000

@@ -20,12 +20,13 @@ def test(gts, test_folder, threshold, skip):
         carplate = carplate[skip:]
         name = basename(dets_name)
         gt = gts[name]
-        #print gt, len(gt), carplate, len(carplate)
+        # print gt, len(gt), carplate, len(carplate)
         if score > threshold:
             if carplate== gt: #.encode('utf8'):
                 tp += 1
             else:
                 fp += 1
+                print name, gt, carplate, score
     #fn = len(gts) - tp - fp
     fn = len(dets_txt) - tp - fp
     if tp +fp ==0:
@@ -43,7 +44,7 @@ def load_gt(ocrtxt_file, skip):
     gts ={}
     for line in open(ocrtxt_file, 'r'):
         fname, label = line.split(';')
-        bname = basename(fname).replace('_plate.jpg', '')
+        bname = basename(fname).replace('.jpg', '')
 
         plate = label.strip().decode('utf8')
         plate = plate.replace('|', '')
@@ -55,7 +56,7 @@ def load_gt(ocrtxt_file, skip):
 def eval(ocrlabel, res_dir, skip):
     gts = load_gt(ocrlabel, skip)
     # print gts
-    tmax = 10.0
+    tmax = 12.0
     tmin = 0.0
     tnow = 0.0
     while True:
