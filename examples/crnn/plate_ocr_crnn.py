@@ -7,7 +7,7 @@ import caffe
 class PlateOCR:
 
     def __init__(self, caffemodel='/mnt/soulfs2/wfei/code/crnn.caffe/examples/crnn/model/crnn_plate_iter_12000.caffemodel'):
-        char_dict = json.load(open('/mnt/soulfs2/wfei/code/crnn.caffe/examples/lprnet/utils/carplate.json', 'r'))
+        char_dict = json.load(open('./utils/carplate.json', 'r'))
         self.char_set = {v: k for k, v in char_dict.iteritems()}
         self.net = self._init_det(caffemodel)
 
@@ -19,7 +19,7 @@ class PlateOCR:
             caffe.set_device(GPU_ID)
         else:
             caffe.set_mode_cpu()
-        model_fold = '/mnt/soulfs2/wfei/code/crnn.caffe/examples/crnn/'
+        model_fold = './'
         prototxt = model_fold + 'deploy.prototxt'
         #caffemodel = model_fold + 'model/crnn_plate_iter_120000.caffemodel'
         net = caffe.Net(prototxt, caffemodel, caffe.TEST)
