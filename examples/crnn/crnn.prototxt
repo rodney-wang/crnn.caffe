@@ -8,7 +8,7 @@ layer {
         phase: TRAIN
     }
     hdf5_data_param {
-        source: "./data/plate/crnn/hkonly_train.list"
+        source: "./data/plate/crnn/hkonly/hkonly_train.list"
         batch_size: 256
     }
 }
