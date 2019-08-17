@@ -8,7 +8,7 @@ layer {
         phase: TRAIN
     }
     hdf5_data_param {
-        source: "./data/plate/crnn/plate_training_wanda.list"
+        source: "./data/plate/crnn/wanda/wanda_train.list"
         #source: "./data/plate/crnn/k11_20190408.list"
         batch_size: 256
     }
@@ -23,7 +23,7 @@ layer {
         phase: TEST
     }
     hdf5_data_param {
-        source: "./data/plate/crnn/plate_testing_wanda.list"
+        source: "./data/plate/crnn/wanda/wanda_test.list"
         batch_size: 256
     }
 }
