@@ -10,13 +10,14 @@ import json
 import random
 import argparse
 import codecs
+from PIL import Image
 from augment_data import augment_data
 
 CAFFE_ROOT = os.getcwd()   # assume you are in $CAFFE_ROOT$ dir
 IMAGE_WIDTH, IMAGE_HEIGHT = 96, 32
 LABEL_SEQ_LEN = 8
 char_dict = json.load(open('/mnt/soulfs2/wfei/code/crnn.caffe/examples/lprnet/utils/carplate.json', 'r'))
-num_dict =  {v: k for k, v in char_dict.iteritems()}
+num_dict =  {v: k for k, v in char_dict.items()}
 
 def write_image_info_into_file(file_name, data_tuple):
     with codecs.open(file_name, 'w', encoding='utf-8') as f:
@@ -29,9 +30,9 @@ def write_image_info_into_file(file_name, data_tuple):
 
 def write_image_info_into_hdf5(file_name, data_tuple, phase):
     total_size = len(data_tuple)
-    print '[+] total image for {0} is {1}'.format(file_name, len(data_tuple))
+    print('[+] total image for {0} is {1}'.format(file_name, len(data_tuple)))
     single_size = 20000
-    groups = total_size / single_size
+    groups = int(total_size / single_size)
     if total_size % single_size:
         groups += 1
     def process(file_name, data):
@@ -42,29 +43,30 @@ def write_image_info_into_hdf5(file_name, data_tuple, phase):
             label_seq[i, :len(numbers)] = numbers
             #img = caffe.io.load_image(img_path, color=False) #load as grayscale
             #img = caffe.io.resize(img, (IMAGE_HEIGHT, IMAGE_WIDTH, 1))
-
-            img = cv2.imread(img_path)
+            img = Image.open(img_path).convert('L')
+            #img = cv2.imread(img_path)
             img = augment_data(img)
-            img = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
-            img = cv2.resize(img, (IMAGE_WIDTH, IMAGE_HEIGHT))
+            #img = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
+            img = img.resize((IMAGE_WIDTH, IMAGE_HEIGHT))
+            img = np.array(img)
             img = img[..., np.newaxis]
             img = img/255.
             img = np.transpose(img, (2, 0, 1))
             img_data[i] = img
             #"""
             if (i+1) % 1000 == 0:
-                print '[+] ###{} name: {}'.format(i, img_path)
-                print '[+] number: {}'.format(','.join(map(lambda x: str(x), numbers)))
-                print '[+] label: {}'.format(','.join(map(lambda x: str(x), label_seq[i])))
+                print('[+] ###{} name: {}'.format(i, img_path))
+                print( '[+] number: {}'.format(','.join(map(lambda x: str(x), numbers))))
+                print('[+] label: {}'.format(','.join(map(lambda x: str(x), label_seq[i]))))
             #"""
         with h5py.File(file_name, 'w') as f:
             f.create_dataset('data', data = img_data)
             f.create_dataset('label', data = label_seq)
-            print '=== H5 data written to ', file_name
+            print( '=== H5 data written to ', file_name)
     with open(file_name, 'w') as f:
         workspace = os.path.split(file_name)[0]
         process_pool = []
-        for g in xrange(groups):
+        for g in range(groups):
             h5_file_name = os.path.join(workspace, '%s_%d.h5' %(phase, g))
             f.write(h5_file_name + '\n')
             start_idx = g*single_size
@@ -85,19 +87,20 @@ def write_h5(train_csv, h5_path, prefix, list_name, aug_num):
         #if count >100:
         #    break
         if count % 10000 ==0: 
-            print count, line
+            print (count, line)
         line.strip()
         img_path, label = line.split(';')
         label = label.strip()[1:-1]
-        numbers = [char_dict.get(c.decode('utf-8'), 73) for c in label.split('|')]
+        #numbers = [char_dict.get(c.decode('utf-8'), 73) for c in label.split('|')]
+        numbers = [char_dict.get(c, 73) for c in label.split('|')]
         if len(numbers)>8:
-            print img_path, label, numbers 
+            print(img_path, label, numbers )
             continue 
         for i in range(aug_num):
             images.append(img_path)
             labels.append(numbers)
             count += 1
-    print '[+] total image number: {}'.format(len(images))
+    print( '[+] total image number: {}'.format(len(images)))
 
     data_all = list(zip(images, labels))
     random.shuffle(data_all)

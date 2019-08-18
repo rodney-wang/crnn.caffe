@@ -131,7 +131,6 @@ if __name__ == "__main__":
 
     img = cv2.imread('/Users/fei/tmp/plate.jpg')
     for i in range(10):
-        print i
         image = augment_data(img)
         cv2.imwrite('/Users/fei/tmp/aug/plate_aug'+str(i)+'.jpg', image)
 
