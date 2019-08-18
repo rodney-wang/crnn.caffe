@@ -39,13 +39,16 @@ def write_image_info_into_hdf5(file_name, data_tuple, phase):
         img_data = np.zeros((len(data_tuple), 1, IMAGE_HEIGHT, IMAGE_WIDTH), dtype = np.float32)
         label_seq = 73*np.ones((len(data_tuple), LABEL_SEQ_LEN), dtype = np.float32)
         for i, datum in enumerate(data_tuple):
-            img_path, numbers = datum
+            img_path, numbers, do_aug = datum
             label_seq[i, :len(numbers)] = numbers
             #img = caffe.io.load_image(img_path, color=False) #load as grayscale
             #img = caffe.io.resize(img, (IMAGE_HEIGHT, IMAGE_WIDTH, 1))
             img = Image.open(img_path).convert('L')
             #img = cv2.imread(img_path)
-            img = augment_data(img)
+            if do_aug:
+		img = augment_data(img)
+                if img is None:
+                   continue 
             #img = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
             img = img.resize((IMAGE_WIDTH, IMAGE_HEIGHT))
             img = np.array(img)
@@ -96,13 +99,16 @@ def write_h5(train_csv, h5_path, prefix, list_name, aug_num):
         if len(numbers)>8:
             print(img_path, label, numbers )
             continue 
-        for i in range(aug_num):
-            images.append(img_path)
-            labels.append(numbers)
-            count += 1
+        images.append(img_path)
+        labels.append(numbers)
+        if count < 204200:
+           aug.append(True)
+        else:
+           aug.append(False)
+        count += 1
     print( '[+] total image number: {}'.format(len(images)))
 
-    data_all = list(zip(images, labels))
+    data_all = list(zip(images, labels, aug))
     random.shuffle(data_all)
 
     #trainning_size = 182000   # number of images for trainning
