@@ -1,5 +1,5 @@
 #!/bin/bash
-GPU_ID=3 
+GPU_ID=1,2 
 cur_date=`date +%Y-%m-%d-%H-%M-%S`
 log_file_name=./examples/crnn/log/${cur_date}
 /root/3rd/warpctc-caffe/build/tools/caffe train \
